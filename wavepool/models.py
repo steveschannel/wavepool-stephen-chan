@@ -18,8 +18,15 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=300)
     body = models.TextField(max_length=3000)
     source = models.URLField()
-    is_cover_story = models.BooleanField(default=False)
+    # Minor optimization is set CMS behavior to automatically set last previous news post that was cover story to is_cover_story=False
+    is_cover_story = models.BooleanField(default=False, unique=True)
     publish_date = models.DateField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-publish_date']
+
+    def __str__(self):
+        return self.title
 
     @property
     def url(self):
