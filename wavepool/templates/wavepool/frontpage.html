@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block page_content %}
+	{% autoescape off %} 
 	<div class="row">
 		<div class="col-md-4">
 			<div id="coverstory" class="row" data-newspost-id="{{cover_story.pk}}">
@@ -49,4 +50,5 @@
 			</div>
 		</div>
 	</div>
+	{% endautoescape %}
 {% endblock %}

@@ -14,9 +14,16 @@ def front_page(request):
             archive: the rest of the newsposts, sorted by most recent
     """
     template = loader.get_template('wavepool/frontpage.html')
-    cover_story = NewsPost.objects.all().order_by('?').first()
-    top_stories = NewsPost.objects.all().order_by('?')[:3]
-    other_stories = NewsPost.objects.all().order_by('?')
+    # this is to place the cover story within its proper location. However, is cover story MUST be unique. Alternatively .filter(is_cover_story=True).get()
+    try:
+        cover_story = NewsPost.objects.get(is_cover_story=True)
+    except:
+        # Non-ideal behavior, but return random story for cover story in case cover story does not exist
+        cover_story = NewsPost.objects.order_by('?').first()
+    top_stories = NewsPost.objects.filter(
+        is_cover_story=False).order_by('-publish_date')[:3]
+    other_stories = NewsPost.objects.filter(
+        is_cover_story=False).order_by('-publish_date')[3:]
 
     context = {
         'cover_story': cover_story,
