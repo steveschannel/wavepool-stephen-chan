@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block body %}
-<h1>{% block title %} {{ newspost.title }}| Wavepool | Industry Dive {% endblock %}</h1>
+<h1>{% block title %} {{ newspost.title }}{% endblock %}</h1>
 {% endblock %}
 
 {% block page_content %}
 
-	{% autoescape off %} 
+
 	<div class="row">
 		<div class="col-2"></div>
 		<div id="newspost-sponsorship" class="col">
@@ -33,7 +33,9 @@
 		</div>
 		<div class="row"><a href="{{newspost.source}}" target="_blank">See the live story at {{newspost.source_divesite_name}}</a></div>
 		<div class="row newspost-body">
+			{% autoescape off %} 
 			{{ newspost.body }}
+			{% endautoescape %}
 		</div>
 	</div>
 
@@ -42,5 +44,5 @@
 			Tags: {% for tag in newspost.tags %}{{tag}}{% if not forloop.last %},{% endif %} {% endfor %}
 		</div>
 	{% endif %}
-	{% endautoescape %}
+
 {% endblock %}
