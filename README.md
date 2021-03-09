@@ -10,7 +10,15 @@ Main takeaways:
   -Next time install whatever dependencies exist to the letter before the start of the project. In this case, it was pipenv.
   -Admin.py file customizes a good amount of the functionality that goes into the vanilla Django CMS experience. If I end up using Django to host my blog this is what I could look into.
   
+-some tasks:
+-fix and implement all included tests
+-implement view in admin.py file
 
+Based on feedback from ID. 
+  - in the future, verify solutions with included tests or write them for programming assessments
+  - make migrations and migrate
+  - General knowledge on using template/MVC features of Django. Perhaps before future programming challenges look into reading one or more pages of documentation of features i have not used to implement before. 
+  - Unique boolean cuts off after true and false, invalidating every single other value after the first two.
 
 
 ## Requirements
