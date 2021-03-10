@@ -38,7 +38,8 @@ class NewsPostDetail(TestBase):
         """
         newsposts = NewsPost.objects.all()
         for newspost in newsposts:
-            expected_title_tag_text = '{} | Wavepool | Industry Dive'.format(newspost.title)
+            expected_title_tag_text = '{} | Wavepool | Industry Dive'.format(
+                newspost.title)
             page = self.client.get(newspost.url)
             page_html = BeautifulSoup(page.content, 'html.parser')
             title_tag_text = page_html.title.text
@@ -51,11 +52,13 @@ class NewsPostDetail(TestBase):
         for newspost in newsposts:
             page = self.client.get(newspost.url)
             page_html = BeautifulSoup(page.content, 'html.parser')
-            rendered_title = page_html.find('h1', {'id': 'newspost-title'}).text
+            rendered_title = page_html.find(
+                'h1', {'id': 'newspost-title'}).text
             rendered_body = page_html.find('div', {'id': 'newspost-body'}).text
             newspost_body = BeautifulSoup(newspost.body, 'html.parser').text
             self.assertEqual(rendered_title, newspost.title)
-            self.assertEqual(self._clean_text(rendered_body), self._clean_text(newspost_body))
+            self.assertEqual(self._clean_text(rendered_body),
+                             self._clean_text(newspost_body))
 
     def test_newspost_body_render(self):
         """ Verify that newsposts rendered at their URL do not display raw HTML to the screen
@@ -86,7 +89,8 @@ class NewsPostDetail(TestBase):
             page_html = BeautifulSoup(page.content, 'html.parser')
             edit_link = page_html.find('a', {'id': 'edit-link'})
             edit_url = edit_link['href']
-            self.assertEqual(edit_url, reverse('admin:wavepool_newspost_change', args=[newspost.pk]))
+            self.assertEqual(edit_url, reverse(
+                'admin:wavepool_newspost_change', args=[newspost.pk]))
 
     def test_divesite_display_name(self):
         """ Verify that the source_divesite_name property of newspost returns the correct dive site for display
@@ -116,6 +120,11 @@ class SiteFrontPage(TestBase):
     def test_cover_story_placement(self):
         """ Verify that the story designated as the cover story appears in the cover story box on the front page
         """
+
+        first_cover_story = NewsPost.objects.filter(is_cover_story=True).get()
+        first_cover_story.is_cover_story = False
+        first_cover_story.save()
+
         cover_story = NewsPost.objects.all().order_by('?').first()
         cover_story.is_cover_story = True
         cover_story.save()
@@ -131,17 +140,25 @@ class SiteFrontPage(TestBase):
     def test_top_stories(self):
         """ Verify that the top stories section contains the 3 most recent stories, excluding the cover story
         """
-        latest_four_stories = NewsPost.objects.all().order_by('publish_date')[:4]
+
+        first_cover_story = NewsPost.objects.filter(is_cover_story=True).get()
+        first_cover_story.is_cover_story = False
+        first_cover_story.save()
+
+        latest_four_stories = NewsPost.objects.all().order_by('-publish_date')[
+            :4]
         cover_story = latest_four_stories[2]
         cover_story.is_cover_story = True
         cover_story.save()
 
-        top_stories = [latest_four_stories[0], latest_four_stories[1], latest_four_stories[3], ]
+        top_stories = [latest_four_stories[0],
+                       latest_four_stories[1], latest_four_stories[3], ]
 
         front_page = self.client.get('')
         front_page_html = BeautifulSoup(front_page.content, 'html.parser')
 
-        rendered_top_stories = front_page_html.find_all('div', {'class': 'topstory'})
+        rendered_top_stories = front_page_html.find_all(
+            'div', {'class': 'topstory'})
         self.assertEqual(len(rendered_top_stories), 3)
 
         top_story_1 = front_page_html.find(
@@ -166,7 +183,12 @@ class SiteFrontPage(TestBase):
     def test_archive_stories(self):
         """ Verify that the archived stories section contains all newsposts that are not the cover story or top stories
         """
-        all_stories = NewsPost.objects.all().order_by('publish_date')
+
+        first_cover_story = NewsPost.objects.filter(is_cover_story=True).get()
+        first_cover_story.is_cover_story = False
+        first_cover_story.save()
+
+        all_stories = NewsPost.objects.all().order_by('-publish_date')
         cover_story = all_stories[7]
         cover_story.is_cover_story = True
         cover_story.save()
@@ -179,7 +201,8 @@ class SiteFrontPage(TestBase):
 
         front_page = self.client.get('')
         front_page_html = BeautifulSoup(front_page.content, 'html.parser')
-        archive_story_divs = front_page_html.find_all('div', {'class': 'archived-story'})
+        archive_story_divs = front_page_html.find_all(
+            'div', {'class': 'archived-story'})
         self.assertEqual(len(archive_story_divs), len(archive_stories))
         for div in archive_story_divs:
             story_id = int(div['data-archive-story-id'])
@@ -190,7 +213,8 @@ class SiteFrontPage(TestBase):
         """
         front_page = self.client.get('')
         front_page_html = BeautifulSoup(front_page.content, 'html.parser')
-        teaser_divs = front_page_html.find_all('div', {'class': 'newspost-teaser'})
+        teaser_divs = front_page_html.find_all(
+            'div', {'class': 'newspost-teaser'})
         for teaser in teaser_divs:
             self.assertNotIn('<p>', teaser.text)
 
@@ -227,7 +251,7 @@ class CmsPage(TestBase):
             obj_id = resolved_admin_url.kwargs['object_id']
             newspost = NewsPost.objects.get(pk=obj_id)
             if last_pubdate:
-                self.assertTrue(newspost.publish_date >= last_pubdate)
+                self.assertTrue(newspost.publish_date <= last_pubdate)
             last_pubdate = newspost.publish_date
 
     def test_only_one_cover_story(self):
@@ -253,8 +277,10 @@ class CmsPage(TestBase):
         }
         self.client.post(new_cover_story_newspost_change_url, post_data)
 
-        new_cover_story_newspost = NewsPost.objects.get(pk=new_cover_story_newspost.pk)
+        new_cover_story_newspost = NewsPost.objects.get(
+            pk=new_cover_story_newspost.pk)
         self.assertTrue(new_cover_story_newspost.is_cover_story)
 
-        old_cover_story_newspost = NewsPost.objects.get(pk=old_cover_story_newspost.pk)
+        old_cover_story_newspost = NewsPost.objects.get(
+            pk=old_cover_story_newspost.pk)
         self.assertFalse(old_cover_story_newspost.is_cover_story)
