@@ -29,12 +29,13 @@ class NewsPost(models.Model):
     def __str__(self):
         return self.title
 
-    def clean(self):
+    def save(self, *args, **kwargs):
         if self.is_cover_story == True:
             if NewsPost.objects.filter(is_cover_story=True).exists():
                 original = NewsPost.objects.filter(is_cover_story=True).get()
                 original.is_cover_story = False
                 original.save()
+        super().save(*args, **kwargs)
 
     
     @property
