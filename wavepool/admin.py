@@ -10,6 +10,7 @@ class NewsPostForm(forms.ModelForm):
 
 class NewsPostAdmin(admin.ModelAdmin):
     form = NewsPostForm
+    list_display = ('title', 'is_cover_story', 'url')
 
 
 admin.site.register(NewsPost, NewsPostAdmin)
