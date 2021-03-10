@@ -6,13 +6,11 @@ Thoughts: This is a great reference for templating in the future, if I ever enco
 Main takeaways: 
   -autoescaping can be a security flaw => see myspace. 
   -you can clean() a model on save to enact changes to other models if necessary, in this case, enforcing a unique model value. Definitely need to know this in the future. Maybe I would have passed if I didn't mess this part up.
+  -differences between clean() and save(). In this instance better to use save, clean is only optionally called to validate models whereas save is always called.
   -Never forget to make/run migrations again!
   -Next time install whatever dependencies exist to the letter before the start of the project. In this case, it was pipenv.
   -Admin.py file customizes a good amount of the functionality that goes into the vanilla Django CMS experience. If I end up using Django to host my blog this is what I could look into.
-  
--some tasks:
--fix and implement all included tests
--implement view in admin.py file
+  -Testing should never be disregarded and even if I see something wrong I either clarify if i need to edit the tests or make the changes to the tests and explain my reasoning, but always try to have all of them pass in future interviews.
 
 Based on feedback from ID. 
   - in the future, verify solutions with included tests or write them for programming assessments
